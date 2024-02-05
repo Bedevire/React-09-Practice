@@ -3,22 +3,27 @@ import Projects from './components/Projects'
 import Project from './components/Project'
 
 function App() {
-  let projects = [
+  let startingProjects = [
     {
       id: 1,
       title: "React",
+      description: '', 
+      dueDate: '',
       tasks: []
     },
     {
       id: 2,
       title: "Azure",
+      description: '', 
+      dueDate: '',
       tasks: [
-        {title: 'AZ-900'},
-        {title: 'AZ-104'}
+        {id:1, title: 'AZ-900'},
+        {id:2, title: 'AZ-104'}
       ]
     }
   ]
 
+  const [projects, setProjects] = useState(startingProjects);
   const [selectedProject, setSelectedProject] = useState(null);
 
 
@@ -27,9 +32,23 @@ function App() {
     setSelectedProject(project);
   }
 
+  function onAddProject(){
+    console.log('project added');
+    const newId = Math.floor(Math.random() * 10000)
+    setProjects(initialProjects => [
+      ...initialProjects, 
+      {
+        id:newId, 
+        title:'New Project', 
+        description: '', 
+        dueDate: '',
+        tasks:[]
+      }])
+  }
+
   return (
     <main className="h-screen my-8 flex gap-8">
-      <Projects projects={projects} onSelected={projectSelected} />
+      <Projects projects={projects} onSelected={projectSelected} onAddProject={onAddProject} />
       {selectedProject && <Project project={selectedProject} />}
     </main> 
   );
