@@ -2,24 +2,15 @@ export default function Projects({projects, onSelected, onAddProject}){
     
     function btnProjectClicked(projectId){
         console.log('Project selected: ' + projectId);
-        let project = getSelectedProject(projectId);
-        if(project)
-            onSelected(project);
-        else
-            alert('Could not find the selected project');
+        //let project = getSelectedProject(projectId);
+        onSelected(projectId);
     }
 
     function btnAddProjetClicked(){
         onAddProject();
     }
 
-    function getSelectedProject(projectId){
-        let filteredProjects = projects.filter(item => item.id === projectId);
-        if(filteredProjects.length > 0)
-            return filteredProjects[0];
-        else
-            return null;
-    } 
+     
 
     return(
         <aside className="w-1/3 px-8 py-16 bg-stone-900 text-stone-50 md:w-72 rounded-r-xl">
