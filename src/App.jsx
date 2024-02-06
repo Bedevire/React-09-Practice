@@ -8,15 +8,15 @@ function App() {
     {
       id: 1,
       title: "React",
-      description: '', 
-      dueDate: '',
+      description: 'Learn React from the ground up', 
+      dueDate: '2024-04-15',
       tasks: []
     },
     {
       id: 2,
       title: "Azure",
-      description: '', 
-      dueDate: '',
+      description: 'Learn Azure. Enough to pass both the Basics test - AZ-900, and the more advanced test, AZ-104', 
+      dueDate: '2024-10-23',
       tasks: [
         {id:1, title: 'AZ-900'},
         {id:2, title: 'AZ-104'}
@@ -25,12 +25,12 @@ function App() {
   ]
 
   const [projects, setProjects] = useState(startingProjects);
-  const [selectedProjectId, setSelectedProjectId] = useState(-1);
+  const [selectedProject, setSelectedProject] = useState(null)
   
   function projectSelected(projectId){
     const project = getSelectedProject(projectId);
     console.log('Project ' + project.title + ' selected');
-    setSelectedProjectId(projectId);
+    setSelectedProject(project)
   }
 
   function getSelectedProject(projectId){
@@ -44,46 +44,62 @@ function App() {
   function onAddProject(){
     console.log('App - onProjectAdd');
     const newId = Math.floor(Math.random() * 10000)
+    const newProject = {
+      id:newId, 
+      title:'New Project', 
+      description: '', 
+      dueDate: '',
+      tasks:[]
+    }
     setProjects(initialProjects => [
       ...initialProjects, 
-      {
-        id:newId, 
-        title:'New Project', 
-        description: '', 
-        dueDate: '',
-        tasks:[]
-      }])
+      newProject
+    ])
+    setSelectedProject(newProject);
   }
 
-  function onProjectDelete(){
+  function onProjectSave(project){
+    console.log('App - saving project ' + project.title);
+  }
+
+  function onProjectDelete(projectId){
     console.log('App - onProjectDelete');
+    setProjects(originalProjects => {
+      return originalProjects.filter( item => item.id != projectId);
+    });
+    setSelectedProject(null);
   }
 
   function onTaskAdd(taskName){
     console.log('App - onTaskAdd - ' + taskName);
     const taskId = Math.floor(Math.random() * 10000);
     const newTask = {id:taskId, title: taskName}
-    let project = getSelectedProject(selectedProjectId)
-    project.tasks = [...project.tasks, newTask]
 
-    setProjects([...projects]);
+    setSelectedProject({
+      id: selectedProject.id, 
+      title: selectedProject.title, 
+      description: selectedProject.description, 
+      dueDate: selectedProject.dueDate,
+      tasks: [...selectedProject.tasks, newTask]
+    });
   }
 
   function onTaskDelete(taskId){
     console.log('App - onTaskDelete - ' + taskId);
 
-    let project = getSelectedProject(selectedProjectId);
-    project.tasks = project.tasks.filter(item => item.id != taskId);
-
-    setProjects([...projects])
+    setSelectedProject({
+      id: selectedProject.id, 
+      title: selectedProject.title, 
+      description: selectedProject.description, 
+      dueDate: selectedProject.dueDate,
+      tasks: selectedProject.tasks.filter(item => item.id != taskId)
+    });
   }
-
-  const selectedProject = getSelectedProject(selectedProjectId);
 
   return (
     <main className="h-screen my-8 flex gap-8">
       <Projects projects={projects} onSelected={projectSelected} onAddProject={onAddProject} />
-      {selectedProject && <Project project={selectedProject} onTaskAdd={onTaskAdd} onTaskDelete={onTaskDelete} />}
+      {selectedProject && <Project project={selectedProject} onTaskAdd={onTaskAdd} onTaskDelete={onTaskDelete} onProjectSave={onProjectSave} />}
       {!selectedProject && <NoProject onCreateProject={onAddProject} />}
     </main> 
   );

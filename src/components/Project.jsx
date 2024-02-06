@@ -1,53 +1,74 @@
-//import { useState } from 'react'
+import { useState, useRef} from 'react'
 import Tasks from './Tasks'
 
-export default function Project({project, onTaskAdd, onTaskDelete}){
+export default function Project({project, onTaskAdd, onTaskDelete, onProjectSave}){
 
-    //const [tasks, setTasks] = useState(project.tasks);
+    const title = useRef(project.title);
+    const description = useRef(project.description);
+    const dueDate = useRef(project.description);
+    const [editing, setEditing] = useState(false);
 
-    //function onTaskAdd2(taskName){
-    //    const taskId = Math.floor(Math.random() * 10000);
-    //    const newTask = {id:taskId, title: taskName}
-        //setTasks(originalTasks => [...originalTasks, newTask]);
-    //}
+    function onEditClick(){
+        setEditing(currentEditMode => !currentEditMode);
+    }
 
-    //function onTaskDelete(taskId){
-        //setTasks(originalTasks => originalTasks.filter(item => item.id !== taskId));
-    //}
+    function onSaveClicked(){
+        setEditing(false);
+        project.title = title.current.value;
+        project.description = description.current.value;
+        project.dueDate = dueDate.current.value;
+        onProjectSave(project);
+    }
 
     return(
         <div className="w-[35rem] mt-16">
             
             <header className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold text-stone-600 mb-2">{project.title}</h2>
+                {editing && 
+                    <>
+                        <button onClick={onEditClick} className="text-stone-500 hover:text-stone-950">Cancel</button>
+                        <button onClick={onSaveClicked} className="px-6 py-2 rounded-md bg-stone-800 text-stone-50 hover:bg-stone-950">Save</button>
+                    </>
+                }
+                {!editing && <button onClick={onEditClick} className="text-stone-500 hover:text-stone-950">Edit</button>}
                 <button className="text-stone-800 hover:text-red-500">Delete</button>
-                <button className="text-stone-500 hover:text-stone-950">Cancel</button>
-                <button className="px-6 py-2 rounded-md bg-stone-800 text-stone-50 hover:bg-stone-950">Save</button>
             </header>
 
-            <div className="pb-4 mb-4 border-b-2 border-stone-300">
-                <label className="text-sm font-bold uppercase text-stone-500">Title</label>
-                <input 
-                    type="text" 
-                    className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                    placeholder={project.title}>
-                </input>
+            { editing && 
+                <div className="pb-4 mb-4 border-b-2 border-stone-300">
+                    <label className="text-sm font-bold uppercase text-stone-500">Title</label>                
+                        <input 
+                            type="text" 
+                            className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
+                            ref={title} 
+                            defaultValue={project.title}>
+                        </input>
 
+                    <label className="text-sm font-bold uppercase text-stone-500">Description</label>
+                    <textarea 
+                        type="textArea" 
+                        className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
+                        ref={description}
+                        defaultValue={project.description}>
+                    </textarea>
+                    
+                    <label className="text-sm font-bold uppercase text-stone-500">Due date</label>
+                    <input 
+                        type="date" 
+                        className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
+                        ref={dueDate}
+                        defaultValue={project.dueDate}>
+                    </input>
+                </div>
+            }
+            { !editing &&
+                <div className="pb-4 mb-40 border-b-2 border-stone-300">
+                    <p className="text-stone-400 mb-4">{project.dueDate}</p>
+                    <p className="text-stone-600">{project.description}</p>
+                </div>
+            }
 
-                <label className="text-sm font-bold uppercase text-stone-500">Description</label>
-                <textarea 
-                    type="textArea" 
-                    className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                    placeholder={project.description}>
-                </textarea>
-                
-                <label className="text-sm font-bold uppercase text-stone-500">Due date</label>
-                <input 
-                    type="date" 
-                    className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                    placeholder={project.dueDate}>
-                </input>
-            </div>
 
             <div>
                 <Tasks tasks={project.tasks} onTaskAdd={onTaskAdd} onTaskDelete={(taskId) => onTaskDelete(taskId, project.id)} />
