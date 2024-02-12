@@ -26,11 +26,17 @@ function App() {
 
   const [projects, setProjects] = useState(startingProjects);
   const [selectedProject, setSelectedProject] = useState(null)
+  const [editing, setEditing] = useState(false);
   
   function projectSelected(projectId){
     const project = getSelectedProject(projectId);
     console.log('Project ' + project.title + ' selected');
+    setEditing(false);
     setSelectedProject(project)
+  }
+
+  function onEditClick(){
+    setEditing(prevEditing => !prevEditing);
   }
 
   function getSelectedProject(projectId){
@@ -56,10 +62,12 @@ function App() {
       newProject
     ])
     setSelectedProject(newProject);
+    setEditing(prevEditing => true); 
   }
 
   function onProjectSave(project){
     console.log('App - saving project ' + project.title);
+    setEditing(false);
   }
 
   function onProjectDelete(projectId){
@@ -99,7 +107,7 @@ function App() {
   return (
     <main className="h-screen my-8 flex gap-8">
       <Projects projects={projects} onSelected={projectSelected} onAddProject={onAddProject} />
-      {selectedProject && <Project project={selectedProject} onTaskAdd={onTaskAdd} onTaskDelete={onTaskDelete} onProjectSave={onProjectSave} />}
+      {selectedProject && <Project project={selectedProject} editing={editing} onEditing={onEditClick} onTaskAdd={onTaskAdd} onTaskDelete={onTaskDelete} onProjectSave={onProjectSave} />}
       {!selectedProject && <NoProject onCreateProject={onAddProject} />}
     </main> 
   );

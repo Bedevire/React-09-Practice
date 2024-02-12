@@ -1,23 +1,49 @@
 import { useState, useRef} from 'react'
 import Tasks from './Tasks'
 
-export default function Project({project, onTaskAdd, onTaskDelete, onProjectSave}){
+export default function Project({project, editing, onEditing, onTaskAdd, onTaskDelete, onProjectSave}){
 
-    const title = useRef(project.title);
-    const description = useRef(project.description);
-    const dueDate = useRef(project.description);
-    const [editing, setEditing] = useState(false);
+    const [title, setTitle] = useState(project.title);
+    const [description, setDescription] = useState(project.description);
+    const [dueDate, setDueDate] = useState(project.dueDate);
 
     function onEditClick(){
-        setEditing(currentEditMode => !currentEditMode);
+        if(!editing){
+            setTitle(project.title);
+            setDescription(project.description);
+            setDueDate(project.dueDate);
+        }
+        else{
+            setTitle('');
+            setDescription('');
+            setDueDate('');
+        }
+        onEditing();
+    }
+
+    function onTitleChange(event){
+        setTitle(event.target.value);
+        console.log('Title changed')
+    }
+
+    function onDescriptionChange(event){
+        setDescription(event.target.value);
+        console.log('Description changed')
+    }
+
+    function onDuaDateChange(event){
+        setDueDate(event.target.value);
+        console.log('Due date changed')
     }
 
     function onSaveClicked(){
-        setEditing(false);
-        project.title = title.current.value;
-        project.description = description.current.value;
-        project.dueDate = dueDate.current.value;
+        project.title = title;
+        project.description = description;
+        project.dueDate = dueDate.current;
         onProjectSave(project);
+        setTitle('');
+        setDescription('');
+        setDueDate('');
     }
 
     return(
@@ -41,24 +67,28 @@ export default function Project({project, onTaskAdd, onTaskDelete, onProjectSave
                         <input 
                             type="text" 
                             className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                            ref={title} 
-                            defaultValue={project.title}>
+                            
+                            onChange={onTitleChange}
+                            value={title}
+                        >
                         </input>
 
                     <label className="text-sm font-bold uppercase text-stone-500">Description</label>
                     <textarea 
                         type="textArea" 
                         className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                        ref={description}
-                        defaultValue={project.description}>
+                        onChange={onDescriptionChange}
+                        value={description}
+                    >
                     </textarea>
                     
                     <label className="text-sm font-bold uppercase text-stone-500">Due date</label>
                     <input 
                         type="date" 
                         className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                        ref={dueDate}
-                        defaultValue={project.dueDate}>
+                        onChange={onDuaDateChange}
+                        value={dueDate}
+                    >
                     </input>
                 </div>
             }
