@@ -1,5 +1,6 @@
 import { useState, useRef} from 'react'
 import Tasks from './Tasks'
+import Input from './Input'
 
 export default function Project({project, editing, onEditing, onTaskAdd, onTaskDelete, onProjectSave}){
 
@@ -9,41 +10,54 @@ export default function Project({project, editing, onEditing, onTaskAdd, onTaskD
 
     function onEditClick(){
         if(!editing){
-            setTitle(project.title);
-            setDescription(project.description);
-            setDueDate(project.dueDate);
+            setStateByProject();
         }
         else{
-            setTitle('');
-            setDescription('');
-            setDueDate('');
+            clearState();
         }
         onEditing();
     }
 
     function onTitleChange(event){
         setTitle(event.target.value);
-        console.log('Title changed')
     }
 
     function onDescriptionChange(event){
         setDescription(event.target.value);
-        console.log('Description changed')
     }
 
     function onDuaDateChange(event){
         setDueDate(event.target.value);
-        console.log('Due date changed')
+    }
+
+    function onTaskAddProject(taskName){
+        onTaskAdd(taskName);
+        setStateByProject();
+    }
+
+    function onTaskDeleteProject(taskId, projectId){
+        onTaskDelete(taskId);
+        setStateByProject();
     }
 
     function onSaveClicked(){
         project.title = title;
         project.description = description;
-        project.dueDate = dueDate.current;
+        project.dueDate = dueDate;
         onProjectSave(project);
+        clearState();
+    }
+
+    function clearState(){
         setTitle('');
         setDescription('');
         setDueDate('');
+    }
+
+    function setStateByProject(){
+        setTitle(project.title);
+        setDescription(project.description);
+        setDueDate(project.dueDate);
     }
 
     return(
@@ -63,33 +77,9 @@ export default function Project({project, editing, onEditing, onTaskAdd, onTaskD
 
             { editing && 
                 <div className="pb-4 mb-4 border-b-2 border-stone-300">
-                    <label className="text-sm font-bold uppercase text-stone-500">Title</label>                
-                        <input 
-                            type="text" 
-                            className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                            
-                            onChange={onTitleChange}
-                            value={title}
-                        >
-                        </input>
-
-                    <label className="text-sm font-bold uppercase text-stone-500">Description</label>
-                    <textarea 
-                        type="textArea" 
-                        className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                        onChange={onDescriptionChange}
-                        value={description}
-                    >
-                    </textarea>
-                    
-                    <label className="text-sm font-bold uppercase text-stone-500">Due date</label>
-                    <input 
-                        type="date" 
-                        className="w-full p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600" 
-                        onChange={onDuaDateChange}
-                        value={dueDate}
-                    >
-                    </input>
+                    <Input isTextArea={false} label="Title" initialValue={project.title} onValueChange={onTitleChange}></Input>
+                    <Input isTextArea={true} label="Description" initialValue={project.description} onValueChange={onDescriptionChange} ></Input>
+                    <Input isTextArea={false} label="Due date" initialValue={project.dueDate} onValueChange={onDuaDateChange} type="date"></Input>
                 </div>
             }
             { !editing &&
@@ -99,9 +89,8 @@ export default function Project({project, editing, onEditing, onTaskAdd, onTaskD
                 </div>
             }
 
-
             <div>
-                <Tasks tasks={project.tasks} onTaskAdd={onTaskAdd} onTaskDelete={(taskId) => onTaskDelete(taskId, project.id)} />
+                <Tasks tasks={project.tasks} onTaskAdd={onTaskAddProject} onTaskDelete={(taskId) => onTaskDeleteProject(taskId, project.id)} />
             </div>
 
         </div>

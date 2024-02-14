@@ -1,7 +1,6 @@
 export default function Projects({projects, onSelected, onAddProject}){
     
     function btnProjectClicked(projectId){
-        console.log('Project selected: ' + projectId);
         onSelected(projectId);
     }
 

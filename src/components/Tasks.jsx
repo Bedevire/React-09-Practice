@@ -5,12 +5,11 @@ export default function Tasks({tasks, onTaskAdd, onTaskDelete}){
     const taskName = useRef();
 
     function btnAddClicked(){
-        console.log('Tasks -> adding task ' + taskName.current.value);
         onTaskAdd(taskName.current.value)
+        taskName.current.value = '';
     }
 
     function btnDeleteClick(taskId){
-        console.log('Tasks -> Deleting task ' + taskId);
         onTaskDelete(taskId);
     }
 
