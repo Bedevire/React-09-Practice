@@ -17,8 +17,8 @@ export default function Tasks({tasks, onTaskAdd, onTaskDelete}){
         <div>
             <h1 className="text-3xl font-bold text-stone-600 mb-2">Tasks</h1>
             <div>
-                <input type="text" ref={taskName}></input>
-                <button onClick={btnAddClicked}>Add Task</button>
+                <input type="text" ref={taskName} className="w-64 px-2 py-1 mx-4 rounded-md bg-stone-100"></input>
+                <button onClick={btnAddClicked} className="px-6 py-2 rounded-md bg-stone-800 text-stone-100 hover:bg-stone-950">Add Task</button>
             </div>
             <ol>
                 {tasks.map((item) => (

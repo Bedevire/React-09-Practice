@@ -155,18 +155,21 @@ function App() {
     });
   }
 
+  let selectedProjectId = appState.selectedProject ? appState.selectedProject.id : -1;
+
   return (
     <main className="h-screen my-8 flex gap-8">
-      <Projects projects={appState.projects} onSelected={projectSelected} onAddProject={onAddProject} />
+      <Projects projects={appState.projects} selectedProjectId={selectedProjectId} onSelected={projectSelected} onAddProject={onAddProject} />
       
       {appState.selectedProject && 
         <Project 
             project={appState.selectedProject} 
             editing={appState.editing} 
             onEditing={onEditClick} 
+            onProjectDelete={onProjectDelete} 
+            onProjectSave={onProjectSave}  
             onTaskAdd={onTaskAdd} 
             onTaskDelete={onTaskDelete} 
-            onProjectSave={onProjectSave} 
         />}
         
       {!appState.selectedProject && 
